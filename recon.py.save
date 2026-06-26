@@ -1,0 +1,113 @@
+# SovSwift Security Toolkit
+# Script 1 - Recon + Port Scanner
+# Author: Elvis Mogere
+
+import socket
+import datetime
+
+target = input("Enter target domain or IP: ")
+print("\n--- SovSwift Recon Report ---")
+print(f"Target     : {target}")
+print(f"Scan Time  : {datetime.datetime.now()}")
+
+try:
+    ip = socket.gethostbyname(target)
+    print(f"IP Address : {ip}")
+except socket.gaierror:
+    print("Could not resolve target.")
+    exit()
+
+print("\nScanning common ports...")
+print("-" * 30)
+
+common_ports = {
+    21: "FTP",
+    22: "SSH",
+    23: "Telnet",
+    80: "HTTP",
+    443: "HTTPS",
+    3306: "MySQL",
+    8080: "HTTP-Alt"
+}
+
+open_ports = []
+
+for port, service in common_ports.items():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(1)
+    result = sock.connect_ex((ip, port))
+    if result == 0:
+        print(f"  [OPEN]   Port {port} - {service}")
+        open_ports.append(port)
+    else:
+        print(f"  [closed] Port {port} - {service}")
+    sock.close()
+
+print("-" * 30)
+print(f"Open ports found: {len(open_ports)}")
+# SovSwift Security Toolkit
+# Script 1 - Recon + Port Scanner
+# Author: Elvis Mogere
+
+import socket
+import datetime
+
+target = input("Enter target domain or IP: ")
+print("\n--- SovSwift Recon Report ---")
+print(f"Target     : {target}")
+print(f"Scan Time  : {datetime.datetime.now()}")
+
+try:
+    ip = socket.gethostbyname(target)
+    print(f"IP Address : {ip}")
+except socket.gaierror:
+    print("Could not resolve target.")
+    exit()
+
+print("\nScanning common ports...")
+print("-" * 30)
+
+common_ports = {
+    21: "FTP",
+    22: "SSH",
+    23: "Telnet",
+    80: "HTTP",
+    443: "HTTPS",
+    3306: "MySQL",
+    8080: "HTTP-Alt"
+}
+
+open_ports = []
+
+for port, service in common_ports.items():
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.settimeout(1)
+    result = sock.connect_ex((ip, port))
+    if result == 0:
+        print(f"  [OPEN]   Port {port} - {service}")
+        open_ports.append(port)
+    else:
+        print(f"  [closed] Port {port} - {service}")
+    sock.close()
+
+print("-" * 30)
+print(f"Open ports found: {len(open_ports)}")
+print("-----------------------------\n")print("-----------------------------\n# SovSwift Security Toolkit
+# Script 1 - Basic Recon
+# Author: Elvis Mogere
+
+import socket
+import datetime
+
+target = input("Enter target domain or IP: ")
+print("\n--- SovSwift Recon Report ---")
+print(f"Target     : {target}")
+print(f"Scan Time  : {datetime.datetime.now()}")
+
+try:
+    ip = socket.gethostbyname(target)
+    print(f"IP Address : {ip}")
+except socket.gaierror:
+    print("Could not resolve target.")
+
+print("-----------------------------\n")
