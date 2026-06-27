@@ -1,0 +1,34 @@
+LETTER OF AUTHORIZATION
+SovSwift Security Assessment
+
+Date: _______________
+
+I, _________________________ (Full Name), representing
+_________________________ (Company Name), hereby authorize
+Elvis Mogere and SovSwift Security to conduct a security
+assessment on the following systems:
+
+Target Website/Domain: _______________________________
+Target IP Address(es): _______________________________
+Scope of Testing: Port scanning, service enumeration,
+and vulnerability assessment only.
+
+Assessment Date(s): From ___________ To ___________
+
+This authorization is granted for legitimate security
+assessment purposes only. SovSwift Security agrees to
+maintain confidentiality of all findings.
+
+Authorized by:
+
+Name:    _______________________________
+Title:   _______________________________
+Company: _______________________________
+Phone:   _______________________________
+Email:   _______________________________
+Signature: _____________________________ Date: _______
+
+
+Elvis Mogere | SovSwift Security
+Nairobi, Kenya
+Contact: elvismogere@gmail.com
