@@ -1,22 +1,13 @@
-# SovSwift PDF Report Generator
+# SovSwift PDF Report Generator v2.0
 # Author: Elvis Mogere
 
 from fpdf import FPDF
 import datetime
-import sys
 
 class SovSwiftReport(FPDF):
     def header(self):
-        self.set_font("Helvetica", "B", 20)
-        self.set_text_color(0, 102, 204)
-        self.cell(0, 15, "SovSwift Security", ln=True, align="C")
-        self.set_font("Helvetica", "", 11)
-        self.set_text_color(100, 100, 100)
-        self.cell(0, 8, "Professional Vulnerability Assessment Report", ln=True, align="C")
-        self.set_draw_color(0, 102, 204)
-        self.set_line_width(0.8)
-        self.line(10, 30, 200, 30)
-        self.ln(8)
+        self.image("logo.png", x=130, y=2, w=55)
+        self.ln(20)
 
     def footer(self):
         self.set_y(-15)
@@ -26,25 +17,40 @@ class SovSwiftReport(FPDF):
 
 def generate_pdf(target, ip, scan_time, results, open_ports):
     pdf = SovSwiftReport()
+    pdf.set_margins(15, 15, 15)
     pdf.add_page()
 
-    # Report info
-    pdf.set_font("Helvetica", "B", 13)
-    pdf.set_text_color(0, 0, 0)
+    # Report title
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.set_text_color(30, 30, 30)
     pdf.cell(0, 10, "Reconnaissance Report", ln=True)
+    pdf.ln(2)
+
+    # Target info box
     pdf.set_font("Helvetica", "", 11)
     pdf.set_fill_color(240, 245, 255)
-    pdf.cell(0, 8, f"  Target     : {target}", ln=True, fill=True)
-    pdf.cell(0, 8, f"  IP Address : {ip}", ln=True, fill=True)
-    pdf.cell(0, 8, f"  Scan Time  : {scan_time}", ln=True, fill=True)
-    pdf.cell(0, 8, f"  Open Ports : {len(open_ports)}", ln=True, fill=True)
-    pdf.ln(5)
+    pdf.set_draw_color(200, 215, 240)
+    pdf.set_line_width(0.3)
+    info = [
+        ("Target", target),
+        ("IP Address", ip),
+        ("Scan Time", scan_time),
+        ("Open Ports Found", str(len(open_ports)))
+    ]
+    for label, value in info:
+        pdf.set_font("Helvetica", "B", 10)
+        pdf.set_text_color(80, 80, 80)
+        pdf.cell(45, 9, f"  {label}", border=0, fill=True)
+        pdf.set_font("Helvetica", "", 10)
+        pdf.set_text_color(20, 20, 20)
+        pdf.cell(0, 9, f": {value}", ln=True, fill=True)
+    pdf.ln(6)
 
-    # Port results
-    pdf.set_font("Helvetica", "B", 12)
+    # Port scan section
+    pdf.set_font("Helvetica", "B", 13)
     pdf.set_text_color(0, 102, 204)
     pdf.cell(0, 10, "Port Scan Results", ln=True)
-    pdf.set_text_color(0, 0, 0)
+    pdf.ln(1)
 
     for result in results:
         status = result["status"]
@@ -53,50 +59,74 @@ def generate_pdf(target, ip, scan_time, results, open_ports):
         banner = result.get("banner", "")
 
         if status == "OPEN":
-            pdf.set_fill_color(220, 255, 220)
+            pdf.set_fill_color(225, 248, 225)
+            pdf.set_text_color(0, 120, 0)
             pdf.set_font("Helvetica", "B", 10)
-            pdf.cell(0, 8, f"  [OPEN]  Port {port} - {service}", ln=True, fill=True)
-            if banner and banner != "Could not grab banner":
+            pdf.cell(0, 9, f"  [OPEN]  Port {port} - {service}", ln=True, fill=True)
+            if banner and banner not in ["Could not grab banner", "No banner"]:
                 pdf.set_font("Helvetica", "I", 9)
                 pdf.set_text_color(80, 80, 80)
-                pdf.multi_cell(0, 7, f"         Banner: {banner[:150]}", fill=False)
-                pdf.set_text_color(0, 0, 0)
+                pdf.set_fill_color(240, 250, 240)
+                lines = [l.strip() for l in banner.split("\n") if l.strip() and any(k in l for k in ["Server", "SSH", "HTTP", "200", "400"])]
+                clean_banner = lines[0][:100] if lines else banner[:80].replace("\n", " ")
+                pdf.cell(0, 8, f"    Banner: {clean_banner}", ln=True, fill=True)
         else:
-            pdf.set_fill_color(250, 250, 250)
+            pdf.set_fill_color(248, 248, 248)
+            pdf.set_text_color(140, 140, 140)
             pdf.set_font("Helvetica", "", 10)
-            pdf.cell(0, 8, f"  [closed] Port {port} - {service}", ln=True, fill=True)
+            pdf.cell(0, 8, f"  [closed]  Port {port} - {service}", ln=True, fill=True)
+        pdf.ln(1)
 
-    pdf.ln(5)
+    pdf.ln(4)
 
-    # Risk notes
+    # Risk assessment section
     if open_ports:
-        pdf.set_font("Helvetica", "B", 12)
-        pdf.set_text_color(204, 0, 0)
+        pdf.set_font("Helvetica", "B", 13)
+        pdf.set_text_color(180, 0, 0)
         pdf.cell(0, 10, "Risk Assessment", ln=True)
-        pdf.set_text_color(0, 0, 0)
-        pdf.set_font("Helvetica", "", 10)
+        pdf.ln(1)
 
         risk_notes = {
-            "22": "SSH exposed: verify strong passwords and key-based auth only",
-            "80": "HTTP open: unencrypted traffic, check for sensitive data exposure",
-            "21": "FTP open: often allows anonymous login, high risk",
-            "23": "Telnet open: completely unencrypted protocol, critical risk",
-            "3306": "MySQL exposed: database directly accessible, critical risk"
+            "22": ("MEDIUM", "SSH exposed - verify strong passwords and disable root login"),
+            "80": ("MEDIUM", "HTTP open - unencrypted traffic, check for sensitive data exposure"),
+            "21": ("HIGH", "FTP open - often allows anonymous login, high risk"),
+            "23": ("CRITICAL", "Telnet open - completely unencrypted protocol, replace immediately"),
+            "3306": ("CRITICAL", "MySQL exposed - database directly accessible from network"),
+            "8080": ("LOW", "HTTP-Alt open - check what service is running on this port")
+        }
+
+        risk_colors = {
+            "LOW": (255, 200, 0),
+            "MEDIUM": (255, 140, 0),
+            "HIGH": (220, 50, 0),
+            "CRITICAL": (180, 0, 0)
         }
 
         for p in open_ports:
             port_num = p.split("/")[0]
             if port_num in risk_notes:
-                pdf.set_fill_color(255, 240, 240)
-                pdf.cell(0, 8, f"  ! {risk_notes[port_num]}", ln=True, fill=True)
+                level, note = risk_notes[port_num]
+                color = risk_colors[level]
+                pdf.set_fill_color(255, 245, 245)
+                pdf.set_text_color(color[0], color[1], color[2])
+                pdf.set_font("Helvetica", "B", 10)
+                pdf.cell(25, 9, f"  {level}", fill=True)
+                pdf.set_text_color(50, 50, 50)
+                pdf.set_font("Helvetica", "", 10)
+                pdf.cell(0, 9, note, ln=True, fill=True)
+                pdf.ln(1)
 
-    pdf.ln(5)
+    pdf.ln(6)
 
-    # Footer note
+    # Closing note
+    pdf.set_draw_color(200, 200, 200)
+    pdf.set_line_width(0.3)
+    pdf.line(15, pdf.get_y(), 195, pdf.get_y())
+    pdf.ln(4)
     pdf.set_font("Helvetica", "I", 9)
-    pdf.set_text_color(120, 120, 120)
-    pdf.cell(0, 8, "This report was generated by SovSwift Security Toolkit.", ln=True)
-    pdf.cell(0, 8, "For professional security assessments contact: SovSwift Security, Nairobi, Kenya.", ln=True)
+    pdf.set_text_color(130, 130, 130)
+    pdf.cell(0, 7, "This report was generated by SovSwift Security Toolkit.", ln=True)
+    pdf.cell(0, 7, "For professional security assessments contact: SovSwift Security, Nairobi, Kenya.", ln=True)
 
     filename = f"sovswift_report_{target}_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}.pdf"
     pdf.output(filename)

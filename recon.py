@@ -20,7 +20,7 @@ def grab_banner(ip, port):
 
 def run_scan(target):
     try:
-        ip = socket.gethostbyname(target)
+        ip = socket.gethostbyname(target) if not target.replace('.','').isdigit() else target
     except socket.gaierror:
         print("Could not resolve target.")
         return
