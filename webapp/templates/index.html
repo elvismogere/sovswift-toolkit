@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SovSwift Security Toolkit</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Helvetica Neue', sans-serif; background: #0a0a0a; color: #f0f0f0; min-height: 100vh; }
+        header { background: #111; border-bottom: 2px solid #cc0000; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
+        header h1 { color: #cc0000; font-size: 24px; letter-spacing: 2px; }
+        header p { color: #888; font-size: 13px; }
+        .container { max-width: 800px; margin: 60px auto; padding: 0 20px; }
+        .card { background: #161616; border: 1px solid #222; border-radius: 8px; padding: 32px; margin-bottom: 24px; }
+        h2 { font-size: 18px; color: #cc0000; margin-bottom: 20px; }
+        input[type=text] { width: 100%; padding: 14px 16px; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; color: #f0f0f0; font-size: 15px; margin-bottom: 16px; outline: none; }
+        input[type=text]:focus { border-color: #cc0000; }
+        button { width: 100%; padding: 14px; background: #cc0000; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; letter-spacing: 1px; }
+        button:hover { background: #aa0000; }
+        button:disabled { background: #444; cursor: not-allowed; }
+        .result-box { background: #0a0a0a; border: 1px solid #222; border-radius: 6px; padding: 20px; margin-top: 20px; display: none; }
+        .port-row { display: flex; align-items: flex-start; padding: 10px 12px; border-radius: 4px; margin-bottom: 6px; font-size: 14px; }
+        .port-open { background: #0d2b0d; border-left: 3px solid #00aa00; }
+        .port-closed { background: #111; border-left: 3px solid #333; color: #555; }
+        .badge-open { background: #00aa00; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; margin-right: 10px; min-width: 55px; text-align: center; }
+        .badge-closed { background: #333; color: #666; padding: 2px 8px; border-radius: 3px; font-size: 11px; margin-right: 10px; min-width: 55px; text-align: center; }
+        .banner { font-size: 12px; color: #888; margin-top: 4px; font-style: italic; }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .info-item { background: #0a0a0a; border: 1px solid #222; border-radius: 4px; padding: 12px; }
+        .info-label { font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 4px; }
+        .info-value { font-size: 14px; color: #f0f0f0; }
+        .download-btn { display: none; width: 100%; padding: 12px; background: #1a1a2e; color: #4a9eff; border: 1px solid #4a9eff; border-radius: 6px; font-size: 14px; cursor: pointer; margin-top: 16px; text-align: center; text-decoration: none; }
+        .download-btn:hover { background: #4a9eff; color: white; }
+        .loading { text-align: center; color: #888; padding: 20px; display: none; }
+        .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #333; border-top-color: #cc0000; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .risk-section { margin-top: 16px; }
+        .risk-item { padding: 8px 12px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; background: #1a0a0a; border-left: 3px solid #cc0000; }
+        .risk-label { font-weight: bold; color: #cc0000; margin-right: 8px; }
+        footer { text-align: center; color: #444; font-size: 12px; padding: 32px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div>
+        <h1>SOVSWIFT</h1>
+        <p>Security Reconnaissance Toolkit</p>
+    </div>
+    <div style="color:#555; font-size:12px; text-align:right;">
+        Nairobi, Kenya<br>elvismogere@gmail.com
+    </div>
+</header>
+
+<div class="container">
+    <div class="card">
+        <h2>🔍 Run Security Scan</h2>
+        <input type="text" id="target" placeholder="Enter domain or IP (e.g. scanme.nmap.org)" />
+        <button id="scanBtn" onclick="runScan()">RUN SCAN</button>
+        <div class="loading" id="loading">
+            <span class="spinner"></span> Scanning target, please wait...
+        </div>
+    </div>
+
+    <div class="result-box" id="results">
+        <h2>📊 Scan Results</h2>
+        <div class="info-grid" id="infoGrid"></div>
+        <div id="portResults"></div>
+        <div class="risk-section" id="riskSection"></div>
+        <a class="download-btn" id="downloadBtn">⬇ Download PDF Report</a>
+    </div>
+</div>
+
+<footer>SovSwift Security | Professional Vulnerability Assessment | Nairobi, Kenya</footer>
+
+<script>
+async function runScan() {
+    const target = document.getElementById("target").value.trim();
+    if (!target) { alert("Please enter a target."); return; }
+
+    document.getElementById("scanBtn").disabled = true;
+    document.getElementById("loading").style.display = "block";
+    document.getElementById("results").style.display = "none";
+
+    const formData = new FormData();
+    formData.append("target", target);
+
+    try {
+        const response = await fetch("/scan", { method: "POST", body: formData });
+        const data = await response.json();
+
+        if (data.error) {
+            alert("Error: " + data.error);
+            return;
+        }
+
+        document.getElementById("infoGrid").innerHTML = `
+            <div class="info-item"><div class="info-label">Target</div><div class="info-value">${data.target}</div></div>
+            <div class="info-item"><div class="info-label">IP Address</div><div class="info-value">${data.ip}</div></div>
+            <div class="info-item"><div class="info-label">Scan Time</div><div class="info-value">${data.scan_time}</div></div>
+            <div class="info-item"><div class="info-label">Open Ports</div><div class="info-value">${data.open_ports.length}</div></div>
+        `;
+
+        let portsHTML = "";
+        data.results.forEach(r => {
+            if (r.status === "OPEN") {
+                portsHTML += `<div class="port-row port-open">
+                    <span class="badge-open">OPEN</span>
+                    <div><strong>Port ${r.port} - ${r.service}</strong>
+                    ${r.banner ? `<div class="banner">${r.banner}</div>` : ""}</div>
+                </div>`;
+            } else {
+                portsHTML += `<div class="port-row port-closed">
+                    <span class="badge-closed">closed</span>
+                    Port ${r.port} - ${r.service}
+                </div>`;
+            }
+        });
+        document.getElementById("portResults").innerHTML = portsHTML;
+
+        const riskNotes = {
+            "22": "SSH exposed - verify strong passwords and disable root login",
+            "80": "HTTP open - unencrypted traffic, check for sensitive data exposure",
+            "21": "FTP open - often allows anonymous login, high risk",
+            "23": "Telnet open - completely unencrypted protocol, critical risk",
+            "3306": "MySQL exposed - database directly accessible, critical risk"
+        };
+
+        let riskHTML = "";
+        data.open_ports.forEach(p => {
+            const port = p.split("/")[0];
+            if (riskNotes[port]) {
+                riskHTML += `<div class="risk-item"><span class="risk-label">!</span>${riskNotes[port]}</div>`;
+            }
+        });
+        document.getElementById("riskSection").innerHTML = riskHTML;
+
+        const dlBtn = document.getElementById("downloadBtn");
+        dlBtn.href = "/download/" + data.pdf;
+        dlBtn.style.display = "block";
+
+        document.getElementById("results").style.display = "block";
+
+    } catch(e) {
+        alert("Scan failed. Please try again.");
+    } finally {
+        document.getElementById("scanBtn").disabled = false;
+        document.getElementById("loading").style.display = "none";
+    }
+}
+
+document.getElementById("target").addEventListener("keypress", function(e) {
+    if (e.key === "Enter") runScan();
+});
+</script>
+
+</body>
+</html>
