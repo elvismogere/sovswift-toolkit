@@ -10,34 +10,41 @@
         header { background: #111; border-bottom: 2px solid #cc0000; padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; }
         header h1 { color: #cc0000; font-size: 24px; letter-spacing: 2px; }
         header p { color: #888; font-size: 13px; }
-        .container { max-width: 800px; margin: 60px auto; padding: 0 20px; }
-        .card { background: #161616; border: 1px solid #222; border-radius: 8px; padding: 32px; margin-bottom: 24px; }
-        h2 { font-size: 18px; color: #cc0000; margin-bottom: 20px; }
-        input[type=text] { width: 100%; padding: 14px 16px; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; color: #f0f0f0; font-size: 15px; margin-bottom: 16px; outline: none; }
+        .container { max-width: 900px; margin: 40px auto; padding: 0 20px; }
+        .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        @media(max-width: 600px) { .tools-grid { grid-template-columns: 1fr; } }
+        .card { background: #161616; border: 1px solid #222; border-radius: 8px; padding: 24px; }
+        .card h2 { font-size: 15px; color: #cc0000; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+        .card p { font-size: 12px; color: #555; margin-bottom: 14px; }
+        .card.full-width { grid-column: 1 / -1; }
+        input[type=text] { width: 100%; padding: 11px 14px; background: #0a0a0a; border: 1px solid #333; border-radius: 6px; color: #f0f0f0; font-size: 14px; margin-bottom: 12px; outline: none; }
         input[type=text]:focus { border-color: #cc0000; }
-        button { width: 100%; padding: 14px; background: #cc0000; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; letter-spacing: 1px; }
+        button { width: 100%; padding: 11px; background: #cc0000; color: white; border: none; border-radius: 6px; font-size: 14px; font-weight: bold; cursor: pointer; }
         button:hover { background: #aa0000; }
-        button:disabled { background: #444; cursor: not-allowed; }
-        .result-box { background: #0a0a0a; border: 1px solid #222; border-radius: 6px; padding: 20px; margin-top: 20px; display: none; }
-        .port-row { display: flex; align-items: flex-start; padding: 10px 12px; border-radius: 4px; margin-bottom: 6px; font-size: 14px; }
-        .port-open { background: #0d2b0d; border-left: 3px solid #00aa00; }
-        .port-closed { background: #111; border-left: 3px solid #333; color: #555; }
-        .badge-open { background: #00aa00; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px; font-weight: bold; margin-right: 10px; min-width: 55px; text-align: center; }
-        .badge-closed { background: #333; color: #666; padding: 2px 8px; border-radius: 3px; font-size: 11px; margin-right: 10px; min-width: 55px; text-align: center; }
-        .banner { font-size: 12px; color: #888; margin-top: 4px; font-style: italic; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .info-item { background: #0a0a0a; border: 1px solid #222; border-radius: 4px; padding: 12px; }
-        .info-label { font-size: 11px; color: #666; text-transform: uppercase; margin-bottom: 4px; }
-        .info-value { font-size: 14px; color: #f0f0f0; }
-        .download-btn { display: none; width: 100%; padding: 12px; background: #1a1a2e; color: #4a9eff; border: 1px solid #4a9eff; border-radius: 6px; font-size: 14px; cursor: pointer; margin-top: 16px; text-align: center; text-decoration: none; }
-        .download-btn:hover { background: #4a9eff; color: white; }
-        .loading { text-align: center; color: #888; padding: 20px; display: none; }
-        .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid #333; border-top-color: #cc0000; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 8px; vertical-align: middle; }
+        button:disabled { background: #333; cursor: not-allowed; }
+        .result-box { margin-top: 14px; background: #0a0a0a; border: 1px solid #1a1a1a; border-radius: 6px; padding: 14px; display: none; font-size: 13px; }
+        .row { display: flex; justify-content: space-between; padding: 7px 0; border-bottom: 1px solid #1a1a1a; }
+        .row:last-child { border-bottom: none; }
+        .label { color: #666; }
+        .value { color: #f0f0f0; text-align: right; max-width: 60%; word-break: break-all; }
+        .ok { color: #00aa00; }
+        .warn { color: #ff9900; }
+        .bad { color: #cc0000; }
+        .port-open { background: #0d2b0d; border-left: 3px solid #00aa00; padding: 8px 12px; border-radius: 3px; margin-bottom: 5px; font-size: 13px; }
+        .port-closed { background: #111; border-left: 3px solid #333; padding: 8px 12px; border-radius: 3px; margin-bottom: 5px; font-size: 13px; color: #444; }
+        .banner-text { font-size: 11px; color: #666; font-style: italic; margin-top: 3px; }
+        .risk-high { color: #cc0000; font-weight: bold; }
+        .risk-medium { color: #ff9900; font-weight: bold; }
+        .risk-low { color: #00aa00; font-weight: bold; }
+        .loading { font-size: 12px; color: #666; margin-top: 8px; display: none; }
+        .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid #333; border-top-color: #cc0000; border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 6px; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .risk-section { margin-top: 16px; }
-        .risk-item { padding: 8px 12px; border-radius: 4px; margin-bottom: 6px; font-size: 13px; background: #1a0a0a; border-left: 3px solid #cc0000; }
-        .risk-label { font-weight: bold; color: #cc0000; margin-right: 8px; }
-        footer { text-align: center; color: #444; font-size: 12px; padding: 32px; }
+        .download-btn { display: none; width: 100%; padding: 10px; background: #1a1a2e; color: #4a9eff; border: 1px solid #4a9eff; border-radius: 6px; font-size: 13px; cursor: pointer; margin-top: 12px; text-align: center; text-decoration: none; }
+        .download-btn:hover { background: #4a9eff; color: white; }
+        .tag-ok { background: #0d2b0d; color: #00aa00; padding: 2px 8px; border-radius: 3px; font-size: 11px; }
+        .tag-warn { background: #2b1a00; color: #ff9900; padding: 2px 8px; border-radius: 3px; font-size: 11px; }
+        .tag-bad { background: #2b0000; color: #cc0000; padding: 2px 8px; border-radius: 3px; font-size: 11px; }
+        footer { text-align: center; color: #333; font-size: 12px; padding: 32px; margin-top: 20px; border-top: 1px solid #1a1a1a; }
     </style>
 </head>
 <body>
@@ -45,114 +52,200 @@
 <header>
     <div>
         <h1>SovSwift</h1>
-        <p>Security Reconnaissance Toolkit</p>
+        <p>Security Tools | Nairobi, Kenya</p>
     </div>
-    <div style="color:#555; font-size:12px; text-align:right;">
-        Nairobi, Kenya<br>elvismogere@gmail.com
+    <div style="color:#444; font-size:11px; text-align:right;">
+        
     </div>
 </header>
 
 <div class="container">
-    <div class="card">
-        <h2>🔍 Run Security Scan</h2>
-        <input type="text" id="target" placeholder="Enter domain or IP (e.g. scanme.nmap.org)" />
-        <button id="scanBtn" onclick="runScan()">RUN SCAN</button>
-        <div class="loading" id="loading">
-            <span class="spinner"></span> Scanning target, please wait...
-        </div>
+
+    <!-- Port Scanner -->
+    <div class="card full-width" style="margin-bottom:16px;">
+        <h2>🔍 Port Scanner & Banner Grabber</h2>
+        <p>Scan open ports and detect software versions running on any target</p>
+        <input type="text" id="scan-target" placeholder="Enter domain or IP (e.g. scanme.nmap.org)" />
+        <button onclick="runScan()">RUN PORT SCAN</button>
+        <div class="loading" id="scan-loading"><span class="spinner"></span>Scanning ports...</div>
+        <div class="result-box" id="scan-results"></div>
+        <a class="download-btn" id="scan-download">⬇ Download PDF Report</a>
     </div>
 
-    <div class="result-box" id="results">
-        <h2>📊 Scan Results</h2>
-        <div class="info-grid" id="infoGrid"></div>
-        <div id="portResults"></div>
-        <div class="risk-section" id="riskSection"></div>
-        <a class="download-btn" id="downloadBtn">⬇ Download PDF Report</a>
+    <div class="tools-grid">
+
+        <!-- DNS Lookup -->
+        <div class="card">
+            <h2>🌐 DNS Lookup</h2>
+            <p>Retrieve DNS records for any domain</p>
+            <input type="text" id="dns-target" placeholder="e.g. google.com" />
+            <button onclick="runDNS()">LOOKUP DNS</button>
+            <div class="loading" id="dns-loading"><span class="spinner"></span>Looking up DNS...</div>
+            <div class="result-box" id="dns-results"></div>
+        </div>
+
+        <!-- WHOIS -->
+        <div class="card">
+            <h2>📋 WHOIS Lookup</h2>
+            <p>Domain registration and ownership information</p>
+            <input type="text" id="whois-target" placeholder="e.g. google.com" />
+            <button onclick="runWHOIS()">LOOKUP WHOIS</button>
+            <div class="loading" id="whois-loading"><span class="spinner"></span>Fetching WHOIS...</div>
+            <div class="result-box" id="whois-results"></div>
+        </div>
+
+        <!-- HTTP Headers -->
+        <div class="card">
+            <h2>🛡️ HTTP Security Headers</h2>
+            <p>Check if a website has proper security headers configured</p>
+            <input type="text" id="headers-target" placeholder="e.g. example.com" />
+            <button onclick="runHeaders()">CHECK HEADERS</button>
+            <div class="loading" id="headers-loading"><span class="spinner"></span>Checking headers...</div>
+            <div class="result-box" id="headers-results"></div>
+        </div>
+
+        <!-- SSL Check -->
+        <div class="card">
+            <h2>🔒 SSL Certificate Check</h2>
+            <p>Verify SSL certificate validity, expiry and strength</p>
+            <input type="text" id="ssl-target" placeholder="e.g. google.com" />
+            <button onclick="runSSL()">CHECK SSL</button>
+            <div class="loading" id="ssl-loading"><span class="spinner"></span>Checking SSL...</div>
+            <div class="result-box" id="ssl-results"></div>
+        </div>
+
     </div>
 </div>
 
-<footer>SovSwift Security | Professional Vulnerability Assessment | Nairobi, Kenya</footer>
+<footer>SovSwift | Professional Cyber Security Services | Nairobi, Kenya</footer>
 
 <script>
-async function runScan() {
-    const target = document.getElementById("target").value.trim();
-    if (!target) { alert("Please enter a target."); return; }
-
-    document.getElementById("scanBtn").disabled = true;
-    document.getElementById("loading").style.display = "block";
-    document.getElementById("results").style.display = "none";
-
-    const formData = new FormData();
-    formData.append("target", target);
-
-    try {
-        const response = await fetch("/scan", { method: "POST", body: formData });
-        const data = await response.json();
-
-        if (data.error) {
-            alert("Error: " + data.error);
-            return;
-        }
-
-        document.getElementById("infoGrid").innerHTML = `
-            <div class="info-item"><div class="info-label">Target</div><div class="info-value">${data.target}</div></div>
-            <div class="info-item"><div class="info-label">IP Address</div><div class="info-value">${data.ip}</div></div>
-            <div class="info-item"><div class="info-label">Scan Time</div><div class="info-value">${data.scan_time}</div></div>
-            <div class="info-item"><div class="info-label">Open Ports</div><div class="info-value">${data.open_ports.length}</div></div>
-        `;
-
-        let portsHTML = "";
-        data.results.forEach(r => {
-            if (r.status === "OPEN") {
-                portsHTML += `<div class="port-row port-open">
-                    <span class="badge-open">OPEN</span>
-                    <div><strong>Port ${r.port} - ${r.service}</strong>
-                    ${r.banner ? `<div class="banner">${r.banner}</div>` : ""}</div>
-                </div>`;
-            } else {
-                portsHTML += `<div class="port-row port-closed">
-                    <span class="badge-closed">closed</span>
-                    Port ${r.port} - ${r.service}
-                </div>`;
-            }
-        });
-        document.getElementById("portResults").innerHTML = portsHTML;
-
-        const riskNotes = {
-            "22": "SSH exposed - verify strong passwords and disable root login",
-            "80": "HTTP open - unencrypted traffic, check for sensitive data exposure",
-            "21": "FTP open - often allows anonymous login, high risk",
-            "23": "Telnet open - completely unencrypted protocol, critical risk",
-            "3306": "MySQL exposed - database directly accessible, critical risk"
-        };
-
-        let riskHTML = "";
-        data.open_ports.forEach(p => {
-            const port = p.split("/")[0];
-            if (riskNotes[port]) {
-                riskHTML += `<div class="risk-item"><span class="risk-label">!</span>${riskNotes[port]}</div>`;
-            }
-        });
-        document.getElementById("riskSection").innerHTML = riskHTML;
-
-        const dlBtn = document.getElementById("downloadBtn");
-        dlBtn.href = "/download/" + data.pdf;
-        dlBtn.style.display = "block";
-
-        document.getElementById("results").style.display = "block";
-
-    } catch(e) {
-        alert("Scan failed. Please try again.");
-    } finally {
-        document.getElementById("scanBtn").disabled = false;
-        document.getElementById("loading").style.display = "none";
-    }
+async function postForm(url, target) {
+    const fd = new FormData();
+    fd.append("target", target);
+    const r = await fetch(url, { method: "POST", body: fd });
+    return r.json();
 }
 
-document.getElementById("target").addEventListener("keypress", function(e) {
-    if (e.key === "Enter") runScan();
+function show(id) { document.getElementById(id).style.display = "block"; }
+function hide(id) { document.getElementById(id).style.display = "none"; }
+
+async function runScan() {
+    const target = document.getElementById("scan-target").value.trim();
+    if (!target) return alert("Enter a target");
+    show("scan-loading"); hide("scan-results"); hide("scan-download");
+    document.querySelector("#scan-target + button").disabled = true;
+    try {
+        const data = await postForm("/scan", target);
+        if (data.error) return alert(data.error);
+        let html = `<div class="row"><span class="label">Target</span><span class="value">${data.target}</span></div>
+        <div class="row"><span class="label">IP</span><span class="value">${data.ip}</span></div>
+        <div class="row"><span class="label">Scan Time</span><span class="value">${data.scan_time}</span></div>
+        <div class="row"><span class="label">Open Ports</span><span class="value ${data.open_ports.length > 0 ? 'warn' : 'ok'}">${data.open_ports.length}</span></div><br>`;
+        data.results.forEach(r => {
+            if (r.status === "OPEN") {
+                html += `<div class="port-open"><strong>[OPEN] Port ${r.port} - ${r.service}</strong>${r.banner ? `<div class="banner-text">${r.banner}</div>` : ""}</div>`;
+            } else {
+                html += `<div class="port-closed">[closed] Port ${r.port} - ${r.service}</div>`;
+            }
+        });
+        document.getElementById("scan-results").innerHTML = html;
+        show("scan-results");
+        const dl = document.getElementById("scan-download");
+        dl.href = "/download/" + data.pdf;
+        show("scan-download");
+    } catch(e) { alert("Scan failed"); }
+    finally { hide("scan-loading"); document.querySelector("#scan-target + button").disabled = false; }
+}
+
+async function runDNS() {
+    const target = document.getElementById("dns-target").value.trim();
+    if (!target) return alert("Enter a domain");
+    show("dns-loading"); hide("dns-results");
+    try {
+        const data = await postForm("/dns", target);
+        if (data.error) return alert(data.error);
+        let html = `<div class="row"><span class="label">Domain</span><span class="value">${data.target}</span></div>`;
+        for (const [type, value] of Object.entries(data.records)) {
+            const val = Array.isArray(value) ? value.join(", ") : value;
+            html += `<div class="row"><span class="label">${type} Record</span><span class="value">${val}</span></div>`;
+        }
+        document.getElementById("dns-results").innerHTML = html;
+        show("dns-results");
+    } catch(e) { alert("DNS lookup failed"); }
+    finally { hide("dns-loading"); }
+}
+
+async function runWHOIS() {
+    const target = document.getElementById("whois-target").value.trim();
+    if (!target) return alert("Enter a domain");
+    show("whois-loading"); hide("whois-results");
+    try {
+        const data = await postForm("/whois", target);
+        if (data.error) return alert(data.error);
+        let html = `
+        <div class="row"><span class="label">Domain</span><span class="value">${data.target}</span></div>
+        <div class="row"><span class="label">Registrar</span><span class="value">${data.registrar}</span></div>
+        <div class="row"><span class="label">Created</span><span class="value">${data.created}</span></div>
+        <div class="row"><span class="label">Expires</span><span class="value">${data.expires}</span></div>
+        <div class="row"><span class="label">Status</span><span class="value">${data.status}</span></div>
+        <div class="row"><span class="label">Nameservers</span><span class="value">${data.nameservers.join(", ") || "Unknown"}</span></div>`;
+        document.getElementById("whois-results").innerHTML = html;
+        show("whois-results");
+    } catch(e) { alert("WHOIS lookup failed"); }
+    finally { hide("whois-loading"); }
+}
+
+async function runHeaders() {
+    const target = document.getElementById("headers-target").value.trim();
+    if (!target) return alert("Enter a domain");
+    show("headers-loading"); hide("headers-results");
+    try {
+        const data = await postForm("/headers", target);
+        if (data.error) return alert(data.error);
+        const riskClass = data.risk === "HIGH" ? "risk-high" : data.risk === "MEDIUM" ? "risk-medium" : "risk-low";
+        let html = `<div class="row"><span class="label">Risk Level</span><span class="value ${riskClass}">${data.risk} (${data.missing_count} missing)</span></div><br>`;
+        for (const [header, value] of Object.entries(data.headers)) {
+            const isMissing = String(value).includes("MISSING");
+            html += `<div class="row"><span class="label">${header}</span><span class="value ${isMissing ? 'bad' : 'ok'}">${value}</span></div>`;
+        }
+        document.getElementById("headers-results").innerHTML = html;
+        show("headers-results");
+    } catch(e) { alert("Header check failed"); }
+    finally { hide("headers-loading"); }
+}
+
+async function runSSL() {
+    const target = document.getElementById("ssl-target").value.trim();
+    if (!target) return alert("Enter a domain");
+    show("ssl-loading"); hide("ssl-results");
+    try {
+        const data = await postForm("/ssl", target);
+        if (data.error) return alert(data.error);
+        const statusClass = data.status && data.status.includes("VALID") ? "ok" : "bad";
+        let html = `
+        <div class="row"><span class="label">Status</span><span class="value ${statusClass}">${data.status}</span></div>
+        <div class="row"><span class="label">Days Left</span><span class="value ${data.days_left > 30 ? 'ok' : 'bad'}">${data.days_left}</span></div>
+        <div class="row"><span class="label">Expiry</span><span class="value">${data.expiry}</span></div>
+        <div class="row"><span class="label">Issued To</span><span class="value">${data.issued_to}</span></div>
+        <div class="row"><span class="label">Issued By</span><span class="value">${data.issued_by}</span></div>
+        <div class="row"><span class="label">Protocol</span><span class="value">${data.version}</span></div>`;
+        document.getElementById("ssl-results").innerHTML = html;
+        show("ssl-results");
+    } catch(e) { alert("SSL check failed"); }
+    finally { hide("ssl-loading"); }
+}
+
+document.addEventListener("keypress", function(e) {
+    if (e.key === "Enter") {
+        const active = document.activeElement;
+        if (active.id === "scan-target") runScan();
+        if (active.id === "dns-target") runDNS();
+        if (active.id === "whois-target") runWHOIS();
+        if (active.id === "headers-target") runHeaders();
+        if (active.id === "ssl-target") runSSL();
+    }
 });
 </script>
-
 </body>
 </html>
