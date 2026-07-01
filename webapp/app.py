@@ -311,3 +311,37 @@ def tech_detect():
         return jsonify({"target": target, "technologies": unique_tech, "count": len(unique_tech)})
     except Exception as e:
         return jsonify({"error": f"Could not detect: {str(e)}"})
+
+@app.route("/ai-analyze", methods=["POST"])
+def ai_analyze():
+    try:
+        import anthropic
+        import os
+        target = request.form.get("target", "")
+        scan_data = request.form.get("scan_data", "")
+        client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+        prompt = f"""You are SovSwift AI, a professional cybersecurity analyst assistant for an African security consultancy based in Nairobi, Kenya.
+
+A security scan has been completed on the following target: {target}
+
+Here are the scan results:
+{scan_data}
+
+Please provide:
+1. A clear, professional EXECUTIVE SUMMARY (2-3 sentences, suitable for a non-technical business owner)
+2. CRITICAL FINDINGS - list the most important security issues found
+3. RISK LEVEL - Overall risk rating (LOW/MEDIUM/HIGH/CRITICAL) with brief explanation
+4. TOP 3 RECOMMENDATIONS - specific actions the business should take immediately
+5. BUSINESS IMPACT - explain in plain English what could happen if these issues are not fixed
+
+Keep your response professional but easy to understand. Remember this is for Kenyan SME business owners who may not be technical. Be direct and actionable."""
+
+        message = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=1000,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        analysis = message.content[0].text
+        return jsonify({"success": True, "analysis": analysis})
+    except Exception as e:
+        return jsonify({"success": False, "error": str(e)})

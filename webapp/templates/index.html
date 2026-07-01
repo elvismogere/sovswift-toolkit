@@ -152,6 +152,19 @@
 
 </div>
 
+    <!-- AI Agent -->
+    <div class="card full-width" style="margin-top:16px; border-color: #cc0000;">
+        <h2>🤖 SovSwift AI Security Analyst</h2>
+        <p>Paste your scan results and let AI generate a professional security analysis report</p>
+        <input type="text" id="ai-target" placeholder="Target domain or IP you scanned" />
+        <textarea id="ai-data" placeholder="Paste your scan findings here (open ports, banners, headers, etc.)" style="width:100%; padding:11px 14px; background:#0a0a0a; border:1px solid #333; border-radius:6px; color:#f0f0f0; font-size:13px; margin-bottom:12px; outline:none; resize:vertical; min-height:120px;"></textarea>
+        <button onclick="runAI()">🤖 GENERATE AI ANALYSIS</button>
+        <div class="loading" id="ai-loading"><span class="spinner"></span>AI is analysing your scan results...</div>
+        <div class="result-box" id="ai-results" style="white-space:pre-wrap; line-height:1.7; font-size:13px;"></div>
+    </div>
+
+</div>
+
 <footer>SovSwift | Professional Cyber Security Services | Nairobi, Kenya</footer>
 
 <script>
@@ -346,6 +359,27 @@ async function runTechDetect() {
         show("tech-results");
     } catch(e) { alert("Detection failed"); }
     finally { hide("tech-loading"); }
+}
+
+
+async function runAI() {
+    const target = document.getElementById("ai-target").value.trim();
+    const scanData = document.getElementById("ai-data").value.trim();
+    if (!target) return alert("Enter the target you scanned");
+    if (!scanData) return alert("Paste your scan findings first");
+    show("ai-loading"); hide("ai-results");
+    document.querySelector("#ai-data + button") && (document.querySelector("#ai-data + button").disabled = true);
+    try {
+        const fd = new FormData();
+        fd.append("target", target);
+        fd.append("scan_data", scanData);
+        const r = await fetch("/ai-analyze", { method: "POST", body: fd });
+        const data = await r.json();
+        if (!data.success) return alert("AI Error: " + data.error);
+        document.getElementById("ai-results").innerHTML = data.analysis.replace(/\n/g, "<br>");
+        show("ai-results");
+    } catch(e) { alert("AI analysis failed: " + e); }
+    finally { hide("ai-loading"); }
 }
 
 </script>
