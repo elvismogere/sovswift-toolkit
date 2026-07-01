@@ -225,3 +225,89 @@ def download(filename):
 if __name__ == "__main__":
     import os
     app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+
+@app.route("/ipgeo", methods=["POST"])
+def ip_geo():
+    target = request.form.get("target", "").strip()
+    if not target:
+        return jsonify({"error": "No target provided"})
+    try:
+        import urllib.request
+        ip = socket.gethostbyname(target) if not target.replace(".","").isdigit() else target
+        with urllib.request.urlopen(f"http://ip-api.com/json/{ip}?fields=country,regionName,city,isp,org,as,query", timeout=5) as r:
+            data = json.loads(r.read().decode())
+            return jsonify({"target": target, "ip": ip, "country": data.get("country","Unknown"), "region": data.get("regionName","Unknown"), "city": data.get("city","Unknown"), "isp": data.get("isp","Unknown"), "org": data.get("org","Unknown")})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route("/subdomains", methods=["POST"])
+def subdomain_finder():
+    target = request.form.get("target", "").strip()
+    if not target:
+        return jsonify({"error": "No target provided"})
+    target = target.replace("https://","").replace("http://","").split("/")[0]
+    try:
+        found = []
+        common_subs = ["www","mail","ftp","admin","webmail","smtp","blog","dev","staging","api","shop","portal","vpn","test","demo","beta","app","mobile","cdn","static","media","secure","login","dashboard","cpanel","forum","support","help","wiki"]
+        for sub in common_subs:
+            try:
+                full = f"{sub}.{target}"
+                ip = socket.gethostbyname(full)
+                found.append({"subdomain": full, "ip": ip})
+            except:
+                pass
+        return jsonify({"target": target, "found": found, "count": len(found)})
+    except Exception as e:
+        return jsonify({"error": str(e)})
+
+@app.route("/techdetect", methods=["POST"])
+def tech_detect():
+    target = request.form.get("target", "").strip()
+    if not target:
+        return jsonify({"error": "No target provided"})
+    try:
+        import urllib.request
+        url = target if target.startswith("http") else f"http://{target}"
+        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=5) as r:
+            headers = dict(r.headers)
+            body = r.read(5000).decode(errors="ignore").lower()
+        tech = []
+        server = headers.get("Server","")
+        if server:
+            tech.append({"name": server, "category": "Web Server"})
+        powered = headers.get("X-Powered-By","")
+        if powered:
+            tech.append({"name": powered, "category": "Framework"})
+        cms_signatures = {
+            "WordPress": ["wp-content","wp-includes"],
+            "Joomla": ["joomla","/components/com_"],
+            "Drupal": ["drupal","sites/default/files"],
+            "Shopify": ["cdn.shopify.com"],
+            "Wix": ["wix.com"],
+            "Squarespace": ["squarespace.com"],
+            "Laravel": ["laravel_session"],
+            "Django": ["csrfmiddlewaretoken"],
+            "React": ["react","__react"],
+            "Vue.js": ["vue.js"],
+            "Angular": ["ng-version"],
+            "Bootstrap": ["bootstrap.min.css"],
+            "jQuery": ["jquery.min.js"],
+        }
+        for cms, sigs in cms_signatures.items():
+            for sig in sigs:
+                if sig in body:
+                    tech.append({"name": cms, "category": "CMS/Framework"})
+                    break
+        cookies = headers.get("Set-Cookie","")
+        if "PHPSESSID" in cookies:
+            tech.append({"name": "PHP", "category": "Language"})
+        seen = set()
+        unique_tech = []
+        for t in tech:
+            if t["name"] not in seen:
+                seen.add(t["name"])
+                unique_tech.append(t)
+        return jsonify({"target": target, "technologies": unique_tech, "count": len(unique_tech)})
+    except Exception as e:
+        return jsonify({"error": f"Could not detect: {str(e)}"})

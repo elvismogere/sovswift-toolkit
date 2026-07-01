@@ -115,6 +115,41 @@
         </div>
 
     </div>
+
+    <div class="tools-grid">
+
+        <!-- IP Geolocation -->
+        <div class="card">
+            <h2>📍 IP Geolocation</h2>
+            <p>Find the physical location and ISP of any domain or IP</p>
+            <input type="text" id="ipgeo-target" placeholder="e.g. google.com" />
+            <button onclick="runIPGeo()">LOCATE IP</button>
+            <div class="loading" id="ipgeo-loading"><span class="spinner"></span>Locating...</div>
+            <div class="result-box" id="ipgeo-results"></div>
+        </div>
+
+        <!-- Subdomain Finder -->
+        <div class="card">
+            <h2>🔎 Subdomain Finder</h2>
+            <p>Discover hidden subdomains on any target domain</p>
+            <input type="text" id="sub-target" placeholder="e.g. google.com" />
+            <button onclick="runSubdomains()">FIND SUBDOMAINS</button>
+            <div class="loading" id="sub-loading"><span class="spinner"></span>Scanning subdomains...</div>
+            <div class="result-box" id="sub-results"></div>
+        </div>
+
+        <!-- Technology Detector -->
+        <div class="card full-width">
+            <h2>⚙️ Technology Detector</h2>
+            <p>Detect CMS, frameworks, server software and programming languages used by any website</p>
+            <input type="text" id="tech-target" placeholder="e.g. wordpress.com" />
+            <button onclick="runTechDetect()">DETECT TECHNOLOGIES</button>
+            <div class="loading" id="tech-loading"><span class="spinner"></span>Detecting technologies...</div>
+            <div class="result-box" id="tech-results"></div>
+        </div>
+
+    </div>
+
 </div>
 
 <footer>SovSwift | Professional Cyber Security Services | Nairobi, Kenya</footer>
@@ -244,8 +279,75 @@ document.addEventListener("keypress", function(e) {
         if (active.id === "whois-target") runWHOIS();
         if (active.id === "headers-target") runHeaders();
         if (active.id === "ssl-target") runSSL();
+        if (active.id === "ipgeo-target") runIPGeo();
+        if (active.id === "sub-target") runSubdomains();
+        if (active.id === "tech-target") runTechDetect();
     }
 });
+
+async function runIPGeo() {
+    const target = document.getElementById("ipgeo-target").value.trim();
+    if (!target) return alert("Enter a target");
+    show("ipgeo-loading"); hide("ipgeo-results");
+    try {
+        const data = await postForm("/ipgeo", target);
+        if (data.error) return alert(data.error);
+        document.getElementById("ipgeo-results").innerHTML = `
+            <div class="row"><span class="label">Target</span><span class="value">${data.target}</span></div>
+            <div class="row"><span class="label">IP</span><span class="value">${data.ip}</span></div>
+            <div class="row"><span class="label">Country</span><span class="value">${data.country}</span></div>
+            <div class="row"><span class="label">Region</span><span class="value">${data.region}</span></div>
+            <div class="row"><span class="label">City</span><span class="value">${data.city}</span></div>
+            <div class="row"><span class="label">ISP</span><span class="value">${data.isp}</span></div>
+            <div class="row"><span class="label">Organisation</span><span class="value">${data.org}</span></div>
+        `;
+        show("ipgeo-results");
+    } catch(e) { alert("Geolocation failed"); }
+    finally { hide("ipgeo-loading"); }
+}
+
+async function runSubdomains() {
+    const target = document.getElementById("sub-target").value.trim();
+    if (!target) return alert("Enter a domain");
+    show("sub-loading"); hide("sub-results");
+    try {
+        const data = await postForm("/subdomains", target);
+        if (data.error) return alert(data.error);
+        let html = `<div class="row"><span class="label">Found</span><span class="value ${data.count > 0 ? "warn" : "ok"}">${data.count} subdomains</span></div><br>`;
+        if (data.found.length === 0) {
+            html += `<div style="color:#555; font-size:13px;">No subdomains found</div>`;
+        } else {
+            data.found.forEach(s => {
+                html += `<div class="port-open"><strong>${s.subdomain}</strong><div class="banner-text">${s.ip}</div></div>`;
+            });
+        }
+        document.getElementById("sub-results").innerHTML = html;
+        show("sub-results");
+    } catch(e) { alert("Subdomain scan failed"); }
+    finally { hide("sub-loading"); }
+}
+
+async function runTechDetect() {
+    const target = document.getElementById("tech-target").value.trim();
+    if (!target) return alert("Enter a domain");
+    show("tech-loading"); hide("tech-results");
+    try {
+        const data = await postForm("/techdetect", target);
+        if (data.error) return alert(data.error);
+        let html = `<div class="row"><span class="label">Technologies Found</span><span class="value warn">${data.count}</span></div><br>`;
+        if (data.technologies.length === 0) {
+            html += `<div style="color:#555; font-size:13px;">No technologies detected</div>`;
+        } else {
+            data.technologies.forEach(t => {
+                html += `<div class="port-open"><strong>${t.name}</strong><div class="banner-text">${t.category}</div></div>`;
+            });
+        }
+        document.getElementById("tech-results").innerHTML = html;
+        show("tech-results");
+    } catch(e) { alert("Detection failed"); }
+    finally { hide("tech-loading"); }
+}
+
 </script>
 </body>
 </html>
